@@ -62,18 +62,11 @@ public class Project_WMMessenger extends JFrame
 		int x = (dimension.width - width) / 2;
 		int y = (dimension.height - height) / 2;
 		setLocation(x, y);
-		
-		
-		
+
+		Message message = new Message(cast.getAddress(), null, 1, null);
+		cast.sendBroadcast(message);
+
 		initComponent();
-		
-		//Message message = new Message(cast.getAddress().toString(), null, 1, null);
-		//cast.sendBroadcast(message);
-		
-		
-		//System.out.println(Message.getNickname("192.168.1.9:40000;robert"));
-		//printListNickname();
-		//panel_list_contact.printListContact();
 	}
 	
 	public void initComponent ()
@@ -106,9 +99,19 @@ public class Project_WMMessenger extends JFrame
 		return panel_list_contact;
 	}
 	
+	public Cast getCast ()
+	{
+		return cast;
+	}
+	
 	public String getNickname ()
 	{
 		return nickname;
+	}
+	
+	public void setNickname (String nick)
+	{
+		nickname = nick;
 	}
 	
 	public void addNickname (String nickname)
@@ -116,23 +119,15 @@ public class Project_WMMessenger extends JFrame
 		list_nickname.add(nickname);
 	}
 	
-	public boolean availableNickname ()
+	public boolean availableNickname (String test_nickname)
 	{
 		for (String nick : list_nickname)
 		{
-			if (nick.equals(nickname))
+			if (nick.equals(test_nickname))
 				return false;
 		}
 		
 		return true;
-	}
-
-	public void printListNickname ()
-	{
-		for (String nick : list_nickname)
-		{
-			System.out.println(nick);
-		}
 	}
 	
 	// Methode principale du programme

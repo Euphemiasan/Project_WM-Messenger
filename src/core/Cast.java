@@ -22,6 +22,13 @@ public class Cast implements NetListener
 
 	private String nom_fichier;
 
+	/*
+	 * Differents etats des switch :
+	 * 		 1 = message pour récupérer tous les pseudo
+	 * 		-1 = message qui renvoi son pseudo
+	 * 		 2 = message équivalent à hello.connect
+	 * 		-2 = message équivalent à roger.connect
+	 */
 	public Cast(Project_WMMessenger pwmm)
 	{
 		try
@@ -54,23 +61,43 @@ public class Cast implements NetListener
 	public void broadcastReceived (Address senderAddress, Serializable content) 
 	{
 		Message message = (Message) content;
-		
-		switch (message.getType())
+
+		if (senderAddress.toString().equals(getAddress()))
+		{	
+			// Si sender = recipient
+		}
+		else
 		{
-			case 1 :
+			switch (message.getType())
 			{
-				//System.out.println("HELLO RECU");
-				
-				String my_adress = netif.getAddress().toString();
-				String[] recipient = {senderAddress.toString()};
-				Message answer = new Message(my_adress, recipient, -1, null);
-				
-				sendUnicast(answer);
-				
-				break;
+				// Etat 1 : on a recu un message qui veut recuperer les pseudo de tout le monde
+				case 1 :
+				{
+					String my_adress = netif.getAddress().toString();
+					String[] recipient = {senderAddress.toString()};
+					Message answer = new Message(my_adress, recipient, -1, program.getNickname());
+					
+					sendUnicast(answer);
+					
+					break;
+				}
+				// Etat 2 : on a recu un message qui veut recuperer les adresses de tout le monde
+				//			on l'enregistre et on lui renvoi notre adresse
+				case 2 :
+				{
+					program.getListContact().addContact((String)message.getMessage());
+					
+					String my_adress = netif.getAddress().toString();
+					String[] recipient = {senderAddress.toString()};
+					String my_contact = my_adress + ";" + program.getNickname();
+					Message answer = new Message(my_adress, recipient, -2, my_contact);
+	
+					sendUnicast(answer);
+					
+					break;
+				}
 			}
 		}
-		
 		/*
 		// On actualise la liste de contacts si on recoit "hello.connect" et on renvoit "roger.connect" pour que l'autre utilisateur
 		// actualise sa liste de contacts
@@ -125,17 +152,29 @@ public class Cast implements NetListener
 	public void unicastReceived(Address senderAddress, Serializable content)
 	{
 		Message message = (Message) content;
-
-		switch (message.getType())
+		
+		if (senderAddress.toString().equals(getAddress()))
+		{	
+			// Si sender = recipient
+		}
+		else
 		{
-			case -1 :
+			switch (message.getType())
 			{
-				//System.out.println("ACCUSE HELLO RECU");
-				program.addNickname(message.getSender());
-				break;
+				// Etat -1 : On recoit un message avec le pseudo de l'expediteur
+				case -1 :
+				{
+					program.addNickname((String)message.getMessage());
+					break;
+				}
+				// Etat -2 : On recoit un message avec l'adresse de l'expediteur
+				case -2 :
+				{
+					program.getListContact().addContact((String)message.getMessage());
+					break;
+				}
 			}
 		}
-		
 		/*
 		if (content instanceof String)
 		{

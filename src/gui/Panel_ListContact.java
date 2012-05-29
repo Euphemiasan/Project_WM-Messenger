@@ -3,8 +3,10 @@ package gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.ListIterator;
+import java.util.StringTokenizer;
 
 import javax.swing.BorderFactory;
 import javax.swing.DefaultListModel;
@@ -44,7 +46,20 @@ public class Panel_ListContact extends JPanel
 		list_contact_title.setBackground(new Color(50, 150, 200));
 		add(list_contact_title);
 		
-		list_contact_jlist = new JList();
+		list_contact_jlist = new JList()
+		{
+			public String getToolTipText(MouseEvent me) {
+				int index = locationToIndex(me.getPoint());
+
+				if (index > -1) {
+					StringTokenizer st = new StringTokenizer(list_contact.get(index), ";");
+					
+					return st.nextToken();
+				}
+				
+				return null;
+			}
+		};
 		list_contact_jlist.setBackground(new Color(175, 225, 255));
 		list_contact_jlist.setSelectionBackground(new Color(135, 206, 235));
 		
@@ -81,32 +96,23 @@ public class Panel_ListContact extends JPanel
 		DefaultListModel list_contact_jlist_model = new DefaultListModel();
 
 		int taille = list_contact.size();
-
+		StringTokenizer st;
+		
 		for (int i=0; i<taille; i++)
 		{
-			list_contact_jlist_model.addElement(list_contact.get(i));
+			st = new StringTokenizer(list_contact.get(i), ";");
+			st.nextToken();
+			
+			list_contact_jlist_model.addElement(st.nextToken());
 		}
-
+		
 		list_contact_jlist.removeAll();
 		list_contact_jlist.setModel(list_contact_jlist_model);
-	}
-	
-	public void removeJList ()
-	{
-		list_contact_jlist.removeAll();
 	}
 
 	public void refreshSize (int height)
 	{
 		setPreferredSize(new Dimension(150, height));
 		list_contact_scrollpane.setPreferredSize(new Dimension(150, height-20));
-	}
-	
-	public void printListContact ()
-	{
-		for (String contact : list_contact)
-		{
-			System.out.println(contact);
-		}
 	}
 }
