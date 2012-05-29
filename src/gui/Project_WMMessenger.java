@@ -46,7 +46,7 @@ public class Project_WMMessenger extends JFrame
 				resizeContent();
 			}
 		};
-		content.setPreferredSize(new Dimension(600, 400));
+		content.setPreferredSize(new Dimension(600, 425));
 		content.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
 		setContentPane(content);
 		
@@ -54,6 +54,7 @@ public class Project_WMMessenger extends JFrame
 		addWindowListener(program_listener);
 		
 		pack();
+		setMinimumSize(new Dimension(getWidth(), getHeight()));
 		
 		// Positionne la fenetre au milieu de l'ecran
 		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
