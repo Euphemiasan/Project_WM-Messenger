@@ -1,4 +1,5 @@
 Project_WM-Messenger
+
 ====================
 
-Projet universitaire messagerie instantannÃ©e
+Projet Universitaire réalisé par Guillaume Weingertner
