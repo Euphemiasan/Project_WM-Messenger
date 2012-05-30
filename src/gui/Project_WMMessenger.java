@@ -5,6 +5,9 @@ import java.awt.EventQueue;
 import java.awt.FlowLayout;
 import java.awt.Graphics;
 import java.awt.Toolkit;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 
 import javax.swing.JFrame;
@@ -50,7 +53,16 @@ public class Project_WMMessenger extends JFrame
 		content.setLayout(new FlowLayout(FlowLayout.LEADING, 0, 0));
 		setContentPane(content);
 		
-		WMMessengerListener program_listener = new WMMessengerListener(this);
+		WindowListener program_listener = new WindowAdapter()
+		{
+			public void windowClosing(WindowEvent e)
+			{
+				String my_contact = cast.getAddress() + ";" + nickname;
+				Message message = new Message(my_contact, null, 3, null);
+				
+				cast.sendBroadcast(message);
+			}
+		};
 		addWindowListener(program_listener);
 		
 		pack();
@@ -98,6 +110,11 @@ public class Project_WMMessenger extends JFrame
 	public Panel_ListContact getListContact ()
 	{
 		return panel_list_contact;
+	}
+	
+	public Panel_Chat getChat ()
+	{
+		return panel_chat;
 	}
 	
 	public Cast getCast ()

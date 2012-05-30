@@ -3,6 +3,7 @@ package gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.ListIterator;
@@ -62,7 +63,27 @@ public class Panel_ListContact extends JPanel
 		};
 		list_contact_jlist.setBackground(new Color(175, 225, 255));
 		list_contact_jlist.setSelectionBackground(new Color(135, 206, 235));
-		
+		list_contact_jlist.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent me) {
+				if (me.getClickCount() == 2) {
+					int index = list_contact_jlist.locationToIndex(me.getPoint());
+					String recipient = list_contact.get(index);
+					ArrayList<String> recipients = new ArrayList<String>();
+					recipients.add(recipient);
+					
+					int index_tab = program.getChat().findConversation(recipients);
+					if (index_tab == 0)
+					{
+						Panel_Conversation conversation = new Panel_Conversation(program, recipients);
+						program.getChat().addConversation(conversation);
+						index_tab = program.getChat().getTabCount() - 1;
+					}
+
+					program.getChat().setSelectedIndex(index_tab);
+				}
+			}
+		});
+
 		list_contact_scrollpane = new JScrollPane(list_contact_jlist);
 		Border border = BorderFactory.createEmptyBorder();  
 		list_contact_scrollpane.setBorder(border);
@@ -77,8 +98,8 @@ public class Panel_ListContact extends JPanel
 		refreshJList();
 	}
 	
-	public void removeContact (String contact) 
-	{
+	public void removeContact (String contact)
+	{	
 		ListIterator<String> it = list_contact.listIterator();
 		while (it.hasNext())
 		{

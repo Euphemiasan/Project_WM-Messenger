@@ -6,6 +6,8 @@ import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -14,8 +16,12 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-public class Panel_Broadcast extends JPanel
+import core.Message;
+
+public class Panel_Broadcast extends JPanel implements ActionListener
 {
+	Project_WMMessenger program;
+	
 	private JScrollPane bcast_log_pane;
 	private JTextArea bcast_log;
 	private JScrollPane bcast_chat_pane;
@@ -24,13 +30,21 @@ public class Panel_Broadcast extends JPanel
 	private JButton bcast_send_file;
 	private JLabel bcast_image;
 	
-	public Panel_Broadcast ()
+	public Panel_Broadcast (Project_WMMessenger pwmm)
 	{
 		super();
+		
+		program = pwmm;
 		
 		setPreferredSize(new Dimension(483, 426));
 		setBackground(new Color(200, 221, 242));
 		
+		initComponent();
+	}
+	
+	public void initComponent ()
+	{
+
 		GridBagLayout bcast_layout = new GridBagLayout();
 		setLayout(bcast_layout);
 		
@@ -41,6 +55,7 @@ public class Panel_Broadcast extends JPanel
 		layout_rules.anchor = GridBagConstraints.CENTER;
 
 		bcast_log = new JTextArea();
+		bcast_log.setLineWrap(true);
 		bcast_log.setEditable(false);
 		bcast_log_pane = new JScrollPane(bcast_log);
 		bcast_log_pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -65,6 +80,7 @@ public class Panel_Broadcast extends JPanel
 		bcast_send_file = new JButton("Fichier");
 		bcast_send_file.setPreferredSize(new Dimension(100, 25));
 		bcast_send_file.setFocusPainted(false);
+		bcast_send_file.addActionListener(this);
 		layout_rules.gridx = 1;
 		layout_rules.gridy = 1;
 		layout_rules.gridwidth = 1;
@@ -73,6 +89,7 @@ public class Panel_Broadcast extends JPanel
 		add(bcast_send_file, layout_rules);
 
 		bcast_chat = new JTextArea();
+		bcast_chat.setLineWrap(true);
 		bcast_chat_pane = new JScrollPane(bcast_chat);
 		bcast_chat_pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		bcast_chat_pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -87,6 +104,7 @@ public class Panel_Broadcast extends JPanel
 		bcast_send_message = new JButton("Envoyer");
 		bcast_send_message.setPreferredSize(new Dimension(100, 100));
 		bcast_send_message.setFocusPainted(false);
+		bcast_send_message.addActionListener(this);
 		layout_rules.gridx = 1;
 		layout_rules.gridy = 2;
 		layout_rules.gridwidth = 1;
@@ -95,9 +113,31 @@ public class Panel_Broadcast extends JPanel
 		add(bcast_send_message, layout_rules);
 		
 	}
-	
-	public void paintComponent (Graphics g)
+
+	public void actionPerformed (ActionEvent ae)
 	{
-		super.paintComponent(g);
+		if (ae.getActionCommand().equals("Envoyer"))
+		{
+			if (bcast_chat.getText().length() > 0)
+			{
+				String my_contact = program.getCast().getAddress() + ";" + program.getNickname();
+				Message message = new Message(my_contact, null, 10, bcast_chat.getText());
+
+				program.getCast().sendBroadcast(message);
+				
+				bcast_chat.setText("");
+			}
+		}
+		else
+		{
+			System.out.println("envoi de fichier à faire plus tard");
+		}
+	}
+	
+	public void addMessage (Message message)
+	{
+		String bcast_log_text = bcast_log.getText() ;
+		String new_text = message.getNickname(message.getSender()) + " : " + message.getMessage() + "\n";
+		bcast_log.setText(bcast_log_text + new_text);
 	}
 }
