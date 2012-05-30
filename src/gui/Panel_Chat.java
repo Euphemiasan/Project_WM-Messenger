@@ -2,9 +2,6 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JTabbedPane;
@@ -15,6 +12,8 @@ import core.Message;
 
 public class Panel_Chat extends JTabbedPane implements ChangeListener
 {
+	private static final long serialVersionUID = 1L;
+
 	private Project_WMMessenger program;
 	
 	private Panel_Broadcast panel_broadcast;

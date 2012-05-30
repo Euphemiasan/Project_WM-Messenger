@@ -5,6 +5,8 @@ import java.util.StringTokenizer;
 
 public class Message implements Serializable
 {
+	private static final long serialVersionUID = 1L;
+	
 	private String sender;
 	private String[] recipients;
 	private int message_type;
@@ -17,7 +19,6 @@ public class Message implements Serializable
 		message_type = t;
 		message_content = c;
 	}
-	
 	
 	/////////////
 	// Getters //

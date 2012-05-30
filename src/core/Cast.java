@@ -2,6 +2,7 @@ package core;
 
 
 
+import gui.JDialog_Get_File;
 import gui.Panel_Conversation;
 import gui.Project_WMMessenger;
 
@@ -15,8 +16,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import javax.swing.JFileChooser;
-
 /**
  * Minimal receiver: just prints any message it receives
  * @author t.perennou
@@ -25,6 +24,8 @@ public class Cast implements NetListener
 {
 	private Project_WMMessenger program;
 	private static NetInterface netif;
+
+	private JDialog_Get_File dialog_file;
 
 	/*
 	 * Differents etats des switch :
@@ -36,7 +37,7 @@ public class Cast implements NetListener
 	 * 
 	 * 		10 = message texte broadcast
 	 * 		11 = message fichier broadcast
-	 * 		12 = message nom fichier unicast
+	 * 		12 = message nom fichier broadcast
 	 * 		
 	 * 		20 = message texte unicast
 	 * 		21 = message fichier unicast
@@ -180,26 +181,48 @@ public class Cast implements NetListener
 					
 					program.getChat().setForegroundAt(index_tab, Color.red);
 					Panel_Conversation conversation = (Panel_Conversation) program.getChat().getComponentAt(index_tab);
-					try {
-						byte[] file_byte = (byte[]) message.getMessage();
-						
-						String file_path = "D://" + conversation.getFileName();
-	
-						FileOutputStream fos = new FileOutputStream(file_path);
-						fos.write(file_byte);
-						fos.close();
-					}
-					catch (FileNotFoundException fnfe)
+					
+					dialog_file = new JDialog_Get_File(program, "Reception Fichier", true, message, conversation.getFileName());
+					
+					String file_path = "";
+					switch (dialog_file.getAction())
 					{
-						fnfe.printStackTrace();
-					}
-					catch (IOException ioe)
-					{
-						ioe.printStackTrace();
+						case 1 :	
+						{
+							file_path = "D:\\" + conversation.getFileName();
+							break;
+						}
+						case 2 :
+							file_path = dialog_file.getPath();
+							break;
 					}
 					
-					Message receipt_message = new Message(message.getSender(), null, 0, "fichier " + conversation.getFileName() + " reçu");
-					conversation.addMessage(receipt_message);
+					if (dialog_file.getAction() != 3)
+					{
+						try {
+							byte[] file_byte = (byte[]) message.getMessage();
+		
+							FileOutputStream fos = new FileOutputStream(file_path);
+							fos.write(file_byte);
+							fos.close();
+						}
+						catch (FileNotFoundException fnfe)
+						{
+							fnfe.printStackTrace();
+						}
+						catch (IOException ioe)
+						{
+							ioe.printStackTrace();
+						}
+						
+						Message receipt_message = new Message(message.getSender(), null, 0, "fichier " + conversation.getFileName() + " reçu");
+						conversation.addMessage(receipt_message);
+					}
+					else
+					{
+						Message receipt_message = new Message(message.getSender(), null, 0, "fichier " + conversation.getFileName() + " refusé");
+						conversation.addMessage(receipt_message);
+					}
 					break;
 				}
 				// Etat 22 : On recoit le nom du fichier qui va etre envoye
@@ -215,51 +238,6 @@ public class Cast implements NetListener
 					
 			}
 		}
-		
-		/*
-		if (content instanceof String)
-		{
-			//Si on recoit "roger.connect" on actualise la liste des contacts
-			if(((String) content).matches("roger.connect"))
-			{
-				liste_contact.setlist_contact(senderAddress.toString());
-			}
-			else if (((String) content).length() > 9 && ((String) content).substring(0, 9).equals("file.name"))
-			{
-				nom_fichier = ((String) content).substring(10, ((String) content).length());
-			}
-			else
-			{
-				Conversation conv = messenger.trouverConversation(senderAddress.toString());
-				String content_1=conv.getucast_window();
-				conv.setucast_window(content_1+"\n"+senderAddress.toString()  + " : " + content);
-			}
-		}
-		else
-		{
-			byte[] fichier_byte = (byte[]) content;
-			
-			String fichier_path = "D://" + nom_fichier;
-
-			try {
-				FileOutputStream fils = new FileOutputStream(fichier_path);
-				fils.write(fichier_byte);
-				fils.close();
-				Conversation conv = messenger.trouverConversation(senderAddress.toString());
-				String content_1=conv.getucast_window();
-				conv.setucast_window(content_1+"\n"+senderAddress.toString()  + " : Fichier " + nom_fichier + " re�u");
-			}
-			catch (FileNotFoundException fnfe)
-			{
-				System.out.println("Cr�er le fichier avant noob");
-				fnfe.printStackTrace();
-			}
-			catch (IOException ioe)
-			{
-				ioe.printStackTrace();
-			}
-		}
-		*/
 	}
 
 
@@ -315,39 +293,6 @@ public class Cast implements NetListener
 				}
 			}
 		}
-		/*
-		// On actualise la liste de contacts si on recoit "hello.connect" et on renvoit "roger.connect" pour que l'autre utilisateur
-		// actualise sa liste de contacts
-		if(((String) content).length() > 13 && ((String) content).substring(0, 13).equals("hello.connect"))
-		{
-			System.out.println("Roger B�b�");
-			try {
-				netif.sendUnicast("roger.connect",senderAddress);
-
-				if (!senderAddress.toString().equals(getAddress())){
-
-					liste_contact.setlist_contact(senderAddress.toString());
-				} 
-
-			} catch (IOException e) {
-				e.printStackTrace();
-			}	
-
-		}
-		
-		else if (((String) content).matches("goodbye.connect"))
-		{
-			String expediteur = senderAddress.toString();
-			liste_contact.remove_list_contact(expediteur);
-		}
-		
-		else
-		
-		{
-			String content_1 = broadcast.getbcast_window();
-			broadcast.setbcast_window(content_1 + "\n" +senderAddress.toString()  + " : " +content);
-		}
-		*/
 	}
 
 	public static String getAddress ()
@@ -376,34 +321,5 @@ public class Cast implements NetListener
 		
 		return index_tab;
 	}
-	
-	//Envoi de fichiers
-	public void sendFile_Unicast(File fichier, String destinataire)
-	{
-		try 
-		{
-			FileInputStream fils;
-			fils = new FileInputStream(fichier);
-			byte[] fichier_byte = new byte[(int) fichier.length()];
-			fils.read(fichier_byte);
-			
-			Conversation conv = messenger.findConversation(destinataire);
-			Address addr1 = new Address(destinataire);
-			netif.sendUnicast(fichier_byte, addr1);
-
-			Address addr2 = netif.getAddress();
-			Conversation conv2 = messenger.findConversation(addr1.toString());
-			conv2.setucast_window(conv.getucast_window()+"\n"+addr2.toString()  + " : Fichier envoy�");
-		} 
-		catch (FileNotFoundException fnfe)
-		{
-			fnfe.printStackTrace();
-		}
-		catch (IOException ioe)
-		{
-			ioe.printStackTrace();
-		}
-	}
-
 }
 

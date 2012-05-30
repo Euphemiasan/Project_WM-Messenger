@@ -18,6 +18,8 @@ import core.Message;
 
 public class Project_WMMessenger extends JFrame
 {
+	private static final long serialVersionUID = 1L;
+	
 	private Cast cast;
 	private JPanel content;
 
@@ -42,6 +44,8 @@ public class Project_WMMessenger extends JFrame
 		
 		content = new JPanel()
 		{
+			private static final long serialVersionUID = 1L;
+
 			public void paintComponent(Graphics g)
 			{
 				super.paintComponent(g);
@@ -57,7 +61,7 @@ public class Project_WMMessenger extends JFrame
 		{
 			public void windowClosing(WindowEvent e)
 			{
-				String my_contact = cast.getAddress() + ";" + nickname;
+				String my_contact = Cast.getAddress() + ";" + nickname;
 				Message message = new Message(my_contact, null, 3, null);
 				
 				cast.sendBroadcast(message);
@@ -76,7 +80,7 @@ public class Project_WMMessenger extends JFrame
 		int y = (dimension.height - height) / 2;
 		setLocation(x, y);
 
-		Message message = new Message(cast.getAddress(), null, 1, null);
+		Message message = new Message(Cast.getAddress(), null, 1, null);
 		cast.sendBroadcast(message);
 
 		initComponent();

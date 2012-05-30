@@ -2,7 +2,6 @@ package gui;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -16,10 +15,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import core.Cast;
 import core.Message;
 
 public class Panel_Broadcast extends JPanel implements ActionListener
 {
+	private static final long serialVersionUID = 1L;
+
 	Project_WMMessenger program;
 	
 	private JScrollPane bcast_log_pane;
@@ -61,6 +63,7 @@ public class Panel_Broadcast extends JPanel implements ActionListener
 		bcast_log_pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		bcast_log_pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		bcast_log_pane.setPreferredSize(new Dimension(315, 242));
+		
 		layout_rules.gridx = 0;
 		layout_rules.gridy = 0;
 		layout_rules.gridwidth = 1;
@@ -120,7 +123,7 @@ public class Panel_Broadcast extends JPanel implements ActionListener
 		{
 			if (bcast_chat.getText().length() > 0)
 			{
-				String my_contact = program.getCast().getAddress() + ";" + program.getNickname();
+				String my_contact = Cast.getAddress() + ";" + program.getNickname();
 				Message message = new Message(my_contact, null, 10, bcast_chat.getText());
 
 				program.getCast().sendBroadcast(message);
@@ -137,7 +140,7 @@ public class Panel_Broadcast extends JPanel implements ActionListener
 	public void addMessage (Message message)
 	{
 		String bcast_log_text = bcast_log.getText() ;
-		String new_text = message.getNickname(message.getSender()) + " : " + message.getMessage() + "\n";
+		String new_text = Message.getNickname(message.getSender()) + " : " + message.getMessage() + "\n";
 		bcast_log.setText(bcast_log_text + new_text);
 	}
 }

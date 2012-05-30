@@ -11,10 +11,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import core.Cast;
 import core.Message;
 
 public class JDialog_Connexion extends JDialog implements ActionListener
 {
+	private static final long serialVersionUID = 1L;
+
 	private Project_WMMessenger program;
 	
 	private JLabel label_nickname;
@@ -26,15 +29,14 @@ public class JDialog_Connexion extends JDialog implements ActionListener
 	{
 		super(parent, title, modal);
 		
-		// On lie le programme principal pour recuperer le pseudo
 		program = (Project_WMMessenger) parent;
-
 		setPreferredSize(new Dimension(200, 135));
 		pack();
+		
 		setLocationRelativeTo(null);
 		setResizable(false);
-		// Il ne se passe rien quand on essaie de fermer le JDialog
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setLayout(null);
 		
 		initComponent();
 
@@ -43,7 +45,6 @@ public class JDialog_Connexion extends JDialog implements ActionListener
 	
 	private void initComponent ()
 	{
-		setLayout(null);
 		label_nickname = new JLabel("Nickname : ");
 		label_nickname.setHorizontalAlignment(JLabel.CENTER);
 		label_nickname.setBounds(2, 0, 190, 25);
@@ -72,7 +73,7 @@ public class JDialog_Connexion extends JDialog implements ActionListener
 		{
 			program.setNickname(nickname.getText());
 			
-			String my_adress = program.getCast().getAddress();
+			String my_adress = Cast.getAddress();
 			String my_nickname = program.getNickname();
 			String my_contact = my_adress + ";" + my_nickname;
 			Message message = new Message(my_adress, null, 2, my_contact);
@@ -88,7 +89,6 @@ public class JDialog_Connexion extends JDialog implements ActionListener
 		}
 		else
 			label_error.setText("Nickname déjà utilisé");
-		
 	}
 	
 

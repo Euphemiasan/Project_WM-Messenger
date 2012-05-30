@@ -21,7 +21,6 @@ public class Address implements Serializable, Comparable<Address> {
 	private String ipAddress;
 	private int tcpPort;
 	private InetAddress inetAddress;
-	private String pseudo;
 
 	/**
 	 * Creates an address with a String matching 'ipAddress:port', e.g. 192.168.0.1:40000

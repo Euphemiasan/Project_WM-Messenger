@@ -8,9 +8,6 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -22,10 +19,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import core.Cast;
 import core.Message;
 
 public class Panel_Conversation extends JPanel implements ActionListener
 {
+	private static final long serialVersionUID = 1L;
+
 	private Project_WMMessenger program;
 
 	private JTextArea ucast_log;
@@ -66,20 +66,21 @@ public class Panel_Conversation extends JPanel implements ActionListener
 		layout_rules.weightx = 0;
 		layout_rules.weighty = 0;
 		layout_rules.anchor = GridBagConstraints.CENTER;
-
+		
 		ucast_log = new JTextArea();
-		ucast_log.setEditable(false);
 		ucast_log.setLineWrap(true);
+		ucast_log.setEditable(false);
 		ucast_log_pane = new JScrollPane(ucast_log);
 		ucast_log_pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		ucast_log_pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		ucast_log_pane.setPreferredSize(new Dimension(315, 242));
+		
 		layout_rules.gridx = 0;
 		layout_rules.gridy = 0;
 		layout_rules.gridwidth = 1;
 		layout_rules.gridheight = 2;
 		layout_rules.insets = new Insets(5, 10, 5, 5);
-		add(ucast_log_pane, layout_rules);
+		add(ucast_log, layout_rules);
 
 		ucast_recipient = new JList();
 		DefaultListModel list_contact_jlist_model = new DefaultListModel();
@@ -152,7 +153,7 @@ public class Panel_Conversation extends JPanel implements ActionListener
 		{
 			if (ucast_chat.getText().length() > 0)
 			{
-				String my_contact = program.getCast().getAddress() + ";" + program.getNickname();
+				String my_contact = Cast.getAddress() + ";" + program.getNickname();
 				String[] recipients = new String[contacts.size()];
 				contacts.toArray(recipients);
 				
@@ -166,13 +167,14 @@ public class Panel_Conversation extends JPanel implements ActionListener
 		else
 		{
 			file_chooser = new JFileChooser();
+			file_chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
 			int returnVal = file_chooser.showOpenDialog(null);
 			
 			if (returnVal == JFileChooser.APPROVE_OPTION)
 			{
 				File file = file_chooser.getSelectedFile();
 				
-				String my_contact = program.getCast().getAddress() + ";" + program.getNickname();
+				String my_contact = Cast.getAddress() + ";" + program.getNickname();
 				String[] recipients = new String[contacts.size()];
 				contacts.toArray(recipients);
 				
@@ -188,7 +190,7 @@ public class Panel_Conversation extends JPanel implements ActionListener
 	public void addMessage (Message message)
 	{
 		String bcast_log_text = ucast_log.getText() ;
-		String new_text = message.getNickname(message.getSender()) + " : " + message.getMessage() + "\n";
+		String new_text = Message.getNickname(message.getSender()) + " : " + message.getMessage() + "\n";
 		ucast_log.setText(bcast_log_text + new_text);
 	}
 

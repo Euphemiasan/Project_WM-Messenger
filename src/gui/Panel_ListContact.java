@@ -19,6 +19,8 @@ import javax.swing.border.Border;
 
 public class Panel_ListContact extends JPanel
 {
+	private static final long serialVersionUID = 1L;
+
 	private ArrayList<String> list_contact;
 	
 	private Project_WMMessenger program;
@@ -49,6 +51,8 @@ public class Panel_ListContact extends JPanel
 		
 		list_contact_jlist = new JList()
 		{
+			private static final long serialVersionUID = 1L;
+
 			public String getToolTipText(MouseEvent me) {
 				int index = locationToIndex(me.getPoint());
 
