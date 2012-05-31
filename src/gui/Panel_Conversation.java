@@ -106,17 +106,6 @@ public class Panel_Conversation extends JPanel implements ActionListener
 			{
 				list_contact_jlist_model.addElement(Message.getNickname(contact));
 			}
-			/*
-			int taille = contacts.size();
-			StringTokenizer st;
-			for (int i=0; i<taille; i++)
-			{
-				st = new StringTokenizer(contacts.get(i), ";");
-				st.nextToken();
-				
-				list_contact_jlist_model.addElement(st.nextToken());
-			}
-			*/
 			ucast_recipient.setModel(list_contact_jlist_model);
 		}
 		ucast_recipient_pane = new JScrollPane(ucast_recipient);

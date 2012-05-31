@@ -400,7 +400,20 @@ public class Cast implements NetListener
 					}
 
 					String my_contact =  netif.getAddress().toString() + ";" + program.getNickname();
-					String[] recipient = {message.getSender()};
+					
+					String[] recipient = new String[message.getRecipients().length];
+					int i = 0;
+					
+					for (String contact : message.getRecipients())
+					{
+						if (!contact.equals(my_contact))
+						{
+							recipient[i] = contact;
+							i++;
+						}
+					}
+					recipient[i] = message.getSender();
+					
 					Message acknowledge_receipt_message = new Message(my_contact, recipient, 23, dialog_file.getAction());
 					sendUnicast(acknowledge_receipt_message);
 					
