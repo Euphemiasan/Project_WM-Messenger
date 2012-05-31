@@ -34,7 +34,8 @@ public class Panel_Chat extends JTabbedPane implements ChangeListener
 		super(JTabbedPane.TOP);
 
 		program = pwmm;
-		
+
+		setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		addChangeListener(this);
 		
 		initComponent();
