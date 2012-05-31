@@ -3,9 +3,12 @@ package gui;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ListIterator;
 
 import javax.swing.BorderFactory;
@@ -112,7 +115,38 @@ public class Panel_ListContact extends JPanel
 				}
 			}
 		});
-		
+
+		list_contact_jlist.addKeyListener(new KeyAdapter()
+		{
+			public void keyReleased(KeyEvent ke)
+			{
+				if (ke.getKeyCode() == KeyEvent.VK_ENTER)
+				{
+					if (list_contact_jlist.getSelectedValues().length > 0)
+					{
+						ArrayList<String> recipients = new ArrayList<String>();
+						
+						for (int y : list_contact_jlist.getSelectedIndices())
+						{
+							recipients.add((String) list_contact.get(y));
+						}
+
+						int index_tab = program.getChat().findConversation(recipients);
+						
+						if (index_tab == 0)
+						{
+							Panel_Conversation conversation = new Panel_Conversation(program, recipients);
+							program.getChat().addConversation(conversation);
+							index_tab = program.getChat().getTabCount() - 1;
+						}
+
+						program.getChat().setSelectedIndex(index_tab);
+					}
+				}
+				
+			}
+		});
+
 		list_contact_scrollpane = new JScrollPane(list_contact_jlist);
 		
 		// On supprime la bordure par defaut d'un ScrollPane 
