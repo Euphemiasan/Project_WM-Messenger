@@ -8,7 +8,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.ListIterator;
 
 import javax.swing.BorderFactory;
@@ -115,7 +114,7 @@ public class Panel_ListContact extends JPanel
 				}
 			}
 		});
-
+		// On sélectionne plusieurs contacts dans la JList et on appuye sur entrée pour ouvrir la conversation à plusieurs
 		list_contact_jlist.addKeyListener(new KeyAdapter()
 		{
 			public void keyReleased(KeyEvent ke)

@@ -121,9 +121,7 @@ public class Cast implements NetListener
 				}
 			}
 			
-			// On envois ensuite le message a tous les destinataires 
-			// Marche pour 1 personne et est deja mis en place pour le multicast meme s'il n'a pas pu
-			// etre implemente
+			// On envois ensuite le message a tous les destinataires
 			for (String recipient : message.getRecipients())
 			{
 				String adress_recipient = Message.getAddress(recipient);
