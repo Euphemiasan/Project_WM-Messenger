@@ -13,6 +13,7 @@ import javax.swing.JLabel;
 
 import core.Message;
 
+// Classe JDialog correspond au popup quand on recoit un fichier
 public class JDialog_Get_File extends JDialog implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
@@ -31,6 +32,9 @@ public class JDialog_Get_File extends JDialog implements ActionListener
 	private int action = -1;
 	private String file_path;
 	
+	/////////////////
+	// Constructor //
+	/////////////////
 	public JDialog_Get_File (JFrame parent, String title, boolean modal, Message mes, String name)
 	{
 		super(parent, title, modal);
@@ -40,7 +44,7 @@ public class JDialog_Get_File extends JDialog implements ActionListener
 		
 		setPreferredSize(new Dimension(400, 200));
 		pack();
-		
+
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -50,8 +54,11 @@ public class JDialog_Get_File extends JDialog implements ActionListener
 
 		setVisible(true);
 	}
-
-	private void initComponent ()
+	
+	///////////////////
+	// InitComponent //
+	///////////////////
+	public void initComponent ()
 	{
 		label_message = new JLabel(Message.getNickname(message.getSender()) + " souhaite vous envoyer " + file_name);
 		label_message.setHorizontalAlignment(JLabel.CENTER);
@@ -77,15 +84,20 @@ public class JDialog_Get_File extends JDialog implements ActionListener
 		button_cancel.setBounds(295, 110, 90, 30);
 		button_cancel.addActionListener(this);
 		add(button_cancel);
-		
 	}
 
+	////////////////////////////
+	// ActionListener Methods //
+	////////////////////////////
 	public void actionPerformed (ActionEvent ae)
 	{
+		
+		// Quand on clique sur Accepter on enregistre dans le repertoire par defaut
 		if (ae.getActionCommand().equals("Accepter"))
 		{
 			action = 1;
 		}
+		// Quand on clique sur Enregistrer Sous on recupere le chemin
 		else if (ae.getActionCommand().equals("Enregistrer sous"))
 		{
 			action = 2;
@@ -108,9 +120,13 @@ public class JDialog_Get_File extends JDialog implements ActionListener
 			action = 3;
 		}
 		
+		// Puis on supprime le popup
 		setVisible(false);
 	}
-	
+
+	//////////////////////
+	// Personal Methods //
+	//////////////////////
 	public int getAction ()
 	{
 		return action;

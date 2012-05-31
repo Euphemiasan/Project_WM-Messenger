@@ -22,29 +22,40 @@ import javax.swing.JTextArea;
 import core.Cast;
 import core.Message;
 
+//Classe Panel_Broadcast qui correspond au chat pour une ou plusieurs personnes
 public class Panel_Conversation extends JPanel implements ActionListener
 {
 	private static final long serialVersionUID = 1L;
 
+	// Lien avec le programme principal
 	private Project_WMMessenger program;
 
+	// Historique de conversation
 	private JTextArea ucast_log;
 	private JScrollPane ucast_log_pane;
 
+	// JTextArea envoi de message
 	private JTextArea ucast_chat;
 	private JScrollPane ucast_chat_pane;
 
+	// Expediteurs
 	private ArrayList<String> contacts;
 	private JScrollPane ucast_recipient_pane;
 	private JList ucast_recipient;
-	
+
+	// Boutton envoi de message
 	private JButton ucast_send_message;
+
+	// Boutton envoi de fichier
 	private JButton ucast_send_file;
 
+	// Gestion d'envoi de fichier
 	private JFileChooser file_chooser;
 	private String file_name;
 	
-	
+	/////////////////
+	// Constructor //
+	/////////////////
 	public Panel_Conversation (Project_WMMessenger pwmm, ArrayList<String> cons)
 	{
 		program = pwmm;
@@ -55,12 +66,17 @@ public class Panel_Conversation extends JPanel implements ActionListener
 		
 		initComponent();
 	}
-	
+
+	///////////////////
+	// InitComponent //
+	///////////////////
 	public void initComponent ()
 	{
+		// Gestionnaire de mise en forme en grille
 		GridBagLayout bcast_layout = new GridBagLayout();
 		setLayout(bcast_layout);
-		
+
+		// Contraintes pour le gestionnaire
 		GridBagConstraints layout_rules = new GridBagConstraints();
 		layout_rules.fill = GridBagConstraints.BOTH;
 		layout_rules.weightx = 0;
@@ -68,6 +84,7 @@ public class Panel_Conversation extends JPanel implements ActionListener
 		layout_rules.anchor = GridBagConstraints.CENTER;
 		
 		ucast_log = new JTextArea();
+		// Retour a la line automatique
 		ucast_log.setLineWrap(true);
 		ucast_log.setEditable(false);
 		ucast_log_pane = new JScrollPane(ucast_log);
@@ -80,7 +97,7 @@ public class Panel_Conversation extends JPanel implements ActionListener
 		layout_rules.gridwidth = 1;
 		layout_rules.gridheight = 2;
 		layout_rules.insets = new Insets(5, 10, 5, 5);
-		add(ucast_log, layout_rules);
+		add(ucast_log_pane, layout_rules);
 
 		ucast_recipient = new JList();
 		DefaultListModel list_contact_jlist_model = new DefaultListModel();
@@ -139,18 +156,16 @@ public class Panel_Conversation extends JPanel implements ActionListener
 		layout_rules.gridheight = 1;
 		layout_rules.insets = new Insets(5, 5, 5, 10);
 		add(ucast_send_message, layout_rules);
-		
-	}
-	
-	public ArrayList<String> getContacts()
-	{
-		return contacts;
 	}
 
-	public void actionPerformed(ActionEvent ae)
+	////////////////////////////
+	// ActionListener Methods //
+	////////////////////////////
+	public void actionPerformed (ActionEvent ae)
 	{
 		if (ae.getActionCommand().equals("Envoyer"))
 		{
+			// On envoi un message s'il n'est pas vide
 			if (ucast_chat.getText().length() > 0)
 			{
 				String my_contact = Cast.getAddress() + ";" + program.getNickname();
@@ -160,8 +175,11 @@ public class Panel_Conversation extends JPanel implements ActionListener
 				Message message = new Message(my_contact, recipients, 20, ucast_chat.getText());
 
 				program.getCast().sendUnicast(message);
-				
+
+				// Quand le message est envoye, on remet a zero la ligne de chat
+				// et on lui redonne le focus
 				ucast_chat.setText("");
+				ucast_chat.requestFocusInWindow();
 			}
 		}
 		else
@@ -172,27 +190,32 @@ public class Panel_Conversation extends JPanel implements ActionListener
 			
 			if (returnVal == JFileChooser.APPROVE_OPTION)
 			{
+				// Si on a bien recuperer un fichier, on l'envoi
 				File file = file_chooser.getSelectedFile();
 				
 				String my_contact = Cast.getAddress() + ";" + program.getNickname();
 				String[] recipients = new String[contacts.size()];
 				contacts.toArray(recipients);
-				
+
+				// On envoi d'abord le nom du fichier
 				Message message = new Message(my_contact, recipients, 22, file.getName());
 				program.getCast().sendUnicast(message);
-				
+
+				// Puis on envoi le fichier
 				message = new Message(my_contact, recipients, 21, file);
 				program.getCast().sendUnicast(message);
 			}
 		}
 	}
-	
-	public void addMessage (Message message)
+
+	/////////////
+	// Getters //
+	/////////////
+	public ArrayList<String> getContacts()
 	{
-		String bcast_log_text = ucast_log.getText() ;
-		String new_text = Message.getNickname(message.getSender()) + " : " + message.getMessage() + "\n";
-		ucast_log.setText(bcast_log_text + new_text);
+		return contacts;
 	}
+
 
 	public String getFileName ()
 	{
@@ -203,4 +226,15 @@ public class Panel_Conversation extends JPanel implements ActionListener
 	{
 		file_name = name;
 	}
+
+	//////////////////////
+	// Personal Methods //
+	//////////////////////
+	public void addMessage (Message message)
+	{
+		String bcast_log_text = ucast_log.getText() ;
+		String new_text = Message.getNickname(message.getSender()) + " : " + message.getMessage() + "\n";
+		ucast_log.setText(bcast_log_text + new_text);
+	}
+	
 }
